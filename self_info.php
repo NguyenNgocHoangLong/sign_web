@@ -3,7 +3,7 @@ require_once("entities/khach.class.php");
 include_once("header.php");
 
 // Start session and check if the user is logged in
-session_start();
+//session_start();
 if (!isset($_SESSION['KhachID'])) {
     header("Location: login.php");
     exit;
@@ -14,7 +14,7 @@ try {
     $db = new Db();
     $conn = $db->connect();
 
-    $stmt = $conn->prepare("SELECT KhachID, Khach_Name, SDT, Email, Sign FROM khach WHERE KhachID = ?");
+    $stmt = $conn->prepare("SELECT KhachID, Khach_Name, Email, Sign FROM khach WHERE KhachID = ?");
     $stmt->bind_param("i", $_SESSION['KhachID']);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -49,10 +49,6 @@ try {
         <td><?php echo htmlspecialchars($userInfo['Khach_Name']); ?></td>
     </tr>
     <tr>
-        <td>Phone Number</td>
-        <td><?php echo htmlspecialchars($userInfo['SDT']); ?></td>
-    </tr>
-    <tr>
         <td>Email</td>
         <td><?php echo htmlspecialchars($userInfo['Email']); ?></td>
     </tr>
@@ -60,8 +56,8 @@ try {
         <td>Signature</td>
         <td>
             <?php
-            if (!empty($userInfo['Sign']) && file_exists("C:\Users\ACER\Downloads" . $userInfo['Sign'])) {
-                echo '<img src="C:\Users\ACER\Downloads' . htmlspecialchars($userInfo['Sign']) . '" alt="Signature" style="width: 150px; height: auto;">';
+            if (!empty($userInfo['Sign']) && file_exists("images/" . $userInfo['Sign'])) {
+                echo '<img src="images/' . htmlspecialchars($userInfo['Sign']) . '" alt="Signature" style="width: 150px; height: auto;">';
             } else {
                 echo "No signature uploaded.";
             }

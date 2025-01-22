@@ -1,12 +1,16 @@
-login.php
 <?php
 require_once("entities/khach.class.php");
 session_start();
 $message = "";
+
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['login'])) {
     $khach_name = $_POST['Khach_name'] ?? '';
-    $password = isset($_POST['Password']) ? $_POST['Password'] : '';
-    if (!empty($khach_name) && !empty($password)) {
+    $password = $_POST['Password'] ?? '';
+
+    // Kiểm tra xem đã nhập đầy đủ thông tin chưa
+    if (empty($khach_name) || empty($password)) {
+        $message = "Vui lòng nhập đầy đủ thông tin.";
+    } else {
         $db = new Db();
         $conn = $db->connect();
         $stmt = $conn->prepare("SELECT * FROM Khach WHERE Khach_name = ?");
@@ -15,27 +19,25 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['login'])) {
         $result = $stmt->get_result();
 
         if ($row = $result->fetch_assoc()) {
-            //if (password_verify($password, $row['Password'])) {
-                
-            $_SESSION['KhachID'] = $row['KhachID'];
-            $_SESSION['Khach_Name'] = $row['Khach_Name'];
-            $_SESSION['Password']=$row['Password'];
-            header("Location: home.php");
-            exit;
-            /*} else {
-                $message = "Invalid username or password.";
-            }*/
+            // Kiểm tra mật khẩu
+            if ($password === $row['Password']) { 
+                $_SESSION['KhachID'] = $row['KhachID'];
+                $_SESSION['Khach_Name'] = $row['Khach_Name'];
+                $_SESSION['Password'] = $row['Password'];
+                header("Location: home.php");
+                exit;
+            } else {
+                $message = "Sai username hoặc password.";
+            }
         } else {
-            $message = "Invalid username or password.";
+            $message = "Sai username hoặc password.";
         }
         $stmt->close();
         $conn->close();
-    } else {
-        $message = "Both fields are required.";
     }
 }
 ?>
-<?php include_once("header.php");?>
+<?php include_once("header.php"); ?>
     <h2>Login</h2>
     <p style="color: red;"><?php echo $message; ?></p>
     <form action="login.php" method="post">
@@ -51,4 +53,19 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['login'])) {
             <button type="submit" name="login">Login</button>
         </div>
     </form>
-<?php include_once("footer.php");?>
+    <div>
+        <button id="forgot-password" onclick="redirectToChangePassword()">Forgot Password?</button>
+    </div>
+
+    <script>
+        function redirectToChangePassword() {
+            const username = document.getElementById('Khach_name').value;
+            if (username) {
+                const url = `forgot_password.php?username=${encodeURIComponent(username)}`;
+                window.location.href = url;
+            } else {
+                alert("Please enter your username to reset your password.");
+            }
+        }
+    </script>  
+<?php include_once("footer.php"); ?>

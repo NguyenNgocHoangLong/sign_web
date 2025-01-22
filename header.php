@@ -26,6 +26,9 @@
                 <a href="register.php">Đăng ký</a>
             </li>
             <li>
+                <a href="change_password.php">Đổi mật khẩu</a>
+            </li>
+            <li>
                 <a href="logout.php">Thoát</a>
             </li>
                <!-- <?php session_start(); if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {echo "<a href='logout.php'><button>Thoát</button></a>";} ?> -->
