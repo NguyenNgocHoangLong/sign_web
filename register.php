@@ -5,6 +5,7 @@ $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $khach_name = $_POST['khach_name'] ?? '';
+    $position=$_POST['position'] ?? '';
     $email = $_POST['email'] ?? '';
     $sign = $_POST['sign'] ?? '';
     $password = $_POST['password'] ?? '';
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 
     // Kiểm tra dữ liệu đầu vào
-    if (empty($khach_name) || empty($email) || empty($sign) || empty($password)) {
+    if (empty($khach_name) || empty($position) || empty($email) || empty($sign) || empty($password)) {
         $message = "All fields are required.";
     } elseif ($password !== $confirm_password) {
         $message = "Passwords do not match.";
@@ -54,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 //$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
                 // Thêm người dùng vào cơ sở dữ liệu
-                $stmt = $conn->prepare("INSERT INTO khach (khach_name, email, sign, password) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssss", $khach_name, $ $email, $sign, $password /*$hashed_password*/);
+                $stmt = $conn->prepare("INSERT INTO khach (khach_name,position, email, sign, password) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssss", $khach_name, $position, $email, $sign, $password /*$hashed_password*/);
 
                 if ($stmt->execute()) {
                     $message = "Registration successful. <a href='login.php'>Login here</a>.";
@@ -79,6 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     <div>
         <label for="khach_name">Username:</label>
         <input type="text" name="khach_name" id="khach_name" required>
+    </div>
+    <div>
+        <label for="position">Position:</label>
+        <input type="text" name="position" id="position" required>
     </div>
     <div>
         <label for="email">Email:</label>
